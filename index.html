@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetConnect</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>NetConnect WIFI LOGIN</h1>
+    </header>
+    <main>
+        <!-- Login Section -->
+        <section id="loginSection">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">LOGIN</button>
+            </form>
+        </section>
+
+        <!-- Packages Section -->
+        <section id="packagesSection">
+            <h2>How To Purchase</h2>
+            <ol>
+                <li>Tap on your preferred package</li>
+                <li>Enter your phone number</li>
+                <li>Click "PAY NOW"</li>
+                <li>Enter your M-PESA pin, wait for 30sec for authentication</li>
+            </ol>
+            <div class="packages">
+                <div class="package">
+                    <h3>Weekly 4mbps</h3>
+                    <p>KSH: 400/-</p>
+                    <button>Select</button>
+                </div>
+                <div class="package">
+                    <h3>Monthly 6mbps</h3>
+                    <p>KSH: 1000/-</p>
+                    <button>Select</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reconnect Section -->
+        <section id="reconnectSection">
+            <h2>Reconnect Account</h2>
+            <form id="reconnectForm">
+                <label for="mpesaCode">Enter M-PESA Code:</label>
+                <input type="text" id="mpesaCode" name="mpesaCode" required>
+                <button type="submit">RECONNECT</button>
+            </form>
+        </section>
+
+    
+    <!-- Payment Section -->
+<section id="paymentSection">
+    <h2>Payment Details</h2>
+    <form id="paymentForm">
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="07XXXXXXXX" required>
+        <button type="submit">PAY NOW</button>
+    </form>
+</section>
+</body>
+</html>
