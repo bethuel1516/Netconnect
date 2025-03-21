@@ -1,82 +1,57 @@
 const axios = require('axios');
 const crypto = require('crypto');
+require('dotenv').config();
 
-// Function to generate the password
 function generatePassword(businessShortCode, passkey, timestamp) {
-    const data = `${businessShortCode}${passkey}${timestamp}`;
-    return crypto.createHash('sha256').update(data).digest('hex').toUpperCase();
+    return Buffer.from(`${businessShortCode}${passkey}${timestamp}`).toString('base64');
 }
 
-// Function to generate the timestamp
 function generateTimestamp() {
-    return new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -3); // Format: YYYYMMDDHHmmss
+    return new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -3);
 }
 
-// Function to fetch the access token
-async function getAccessToken(consumerKey, consumerSecret) {
-    const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
-    const response = await axios.get('https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
-        headers: {
-            Authorization: `Basic ${auth}`,
-        },
-    });
-    return response.data.access_token;
-}
-
-// Main function to initiate M-PESA payment
-async function initiateMpesaPayment(phoneNumber, amount, businessShortCode, passkey, callbackURL, consumerKey, consumerSecret) {
+async function getAccessToken() {
     try {
-        // Generate timestamp and password
+        const auth = Buffer.from(`${process.env.CONSUMER_KEY}:${process.env.CONSUMER_SECRET}`).toString('base64');
+        const response = await axios.get('https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
+            headers: { Authorization: `Basic ${auth}` },
+        });
+        return response.data.access_token;
+    } catch (error) {
+        console.error('Error fetching access token:', error);
+        throw new Error('Failed to get access token');
+    }
+}
+
+async function initiateMpesaPayment(phoneNumber, amount) {
+    try {
         const timestamp = generateTimestamp();
-        const password = generatePassword(businessShortCode, passkey, timestamp);
+        const password = generatePassword(process.env.BUSINESS_SHORTCODE, process.env.PASSKEY, timestamp);
+        const accessToken = await getAccessToken();
 
-        // Fetch access token
-        const accessToken = await getAccessToken(consumerKey, consumerSecret);
-
-        // Make the STK Push request
         const response = await axios.post(
             'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
             {
-                BusinessShortCode: businessShortCode,
+                BusinessShortCode: process.env.BUSINESS_SHORTCODE,
                 Password: password,
                 Timestamp: timestamp,
                 TransactionType: 'CustomerPayBillOnline',
                 Amount: amount,
                 PartyA: phoneNumber,
-                PartyB: businessShortCode,
+                PartyB: process.env.BUSINESS_SHORTCODE,
                 PhoneNumber: phoneNumber,
-                CallBackURL: callbackURL,
+                CallBackURL: process.env.CALLBACK_URL,
                 AccountReference: 'NetConnect',
                 TransactionDesc: 'WIFI Package Payment',
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
+            { headers: { Authorization: `Bearer ${accessToken}` } }
         );
 
         return response.data;
     } catch (error) {
         console.error('Error initiating M-PESA payment:', error.response ? error.response.data : error.message);
-        throw new Error('Failed to initiate M-PESA payment');
+        throw new Error('Failed to initiate payment');
     }
 }
 
-// Example usage
-(async () => {
-    try {
-        const phoneNumber = '07XXXXXXXX'; // Replace with the customer's phone number
-        const amount = '1000'; // Amount to be paid
-        const businessShortCode = 'YOUR_BUSINESS_SHORTCODE'; // Replace with your business shortcode
-        const passkey = 'YOUR_PASSKEY'; // Replace with your Lipa Na M-PESA passkey
-        const callbackURL = 'https://yourdomain.com/callback'; // Replace with your callback URL
-        const consumerKey = 'YOUR_CONSUMER_KEY'; // Replace with your API consumer key
-        const consumerSecret = 'YOUR_CONSUMER_SECRET'; // Replace with your API consumer secret
-
-        const result = await initiateMpesaPayment(phoneNumber, amount, businessShortCode, passkey, callbackURL, consumerKey, consumerSecret);
-        console.log('M-PESA Payment Initiated Successfully:', result);
-    } catch (error) {
-        console.error('Error:', error.message);
-    }
-})();
+module.exports = { initiateMpesaPayment };
