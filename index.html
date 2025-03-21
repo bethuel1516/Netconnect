@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetConnect</title>
+    <title>NetConnect - Secure WIFI Login</title>
     <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <header>
@@ -25,25 +26,31 @@
 
         <!-- Packages Section -->
         <section id="packagesSection">
-            <h2>How To Purchase</h2>
-            <ol>
-                <li>Tap on your preferred package</li>
-                <li>Enter your phone number</li>
-                <li>Click "PAY NOW"</li>
-                <li>Enter your M-PESA pin, wait for 30sec for authentication</li>
-            </ol>
+            <h2>Purchase a Package</h2>
+            <p>Select a package and proceed with payment.</p>
             <div class="packages">
-                <div class="package">
+                <div class="package" data-price="400">
                     <h3>Weekly 4mbps</h3>
                     <p>KSH: 400/-</p>
-                    <button>Select</button>
+                    <button class="selectPackage">Select</button>
                 </div>
-                <div class="package">
+                <div class="package" data-price="1000">
                     <h3>Monthly 6mbps</h3>
                     <p>KSH: 1000/-</p>
-                    <button>Select</button>
+                    <button class="selectPackage">Select</button>
                 </div>
             </div>
+        </section>
+
+        <!-- Payment Section -->
+        <section id="paymentSection" style="display:none;">
+            <h2>Payment Details</h2>
+            <form id="paymentForm">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="07XXXXXXXX" required>
+                <input type="hidden" id="packagePrice" name="packagePrice">
+                <button type="submit">PAY NOW</button>
+            </form>
         </section>
 
         <!-- Reconnect Section -->
@@ -55,16 +62,6 @@
                 <button type="submit">RECONNECT</button>
             </form>
         </section>
-
-    
-    <!-- Payment Section -->
-<section id="paymentSection">
-    <h2>Payment Details</h2>
-    <form id="paymentForm">
-        <label for="phoneNumber">Phone Number:</label>
-        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="07XXXXXXXX" required>
-        <button type="submit">PAY NOW</button>
-    </form>
-</section>
+    </main>
 </body>
 </html>
